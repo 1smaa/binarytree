@@ -98,6 +98,3 @@ class BinaryTree(object):
             raise Exception("File name needed.")
         if "{}.bt".format(name) not in os.listdir("storage"):
             raise Exception("Binary tree file not found.")
-
-
-bn = BinaryTree()
