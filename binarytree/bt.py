@@ -4,6 +4,8 @@ import random
 import numpy as np
 import functools
 
+from telegram import ChosenInlineResult
+
 
 def arithmetic_error_catcher(f):
     @functools.wraps(f)
@@ -222,12 +224,8 @@ class binarytree(object):
             chosenNode = self._structure[0]
             father, index, pos = 0, 0, 1
             while chosenNode[0] != node:
-                if node < chosenNode[0]:
-                    father = index
-                    pos = 1
-                else:
-                    father = index
-                    pos = 2
+                father = index
+                pos = 1 if node < chosenNode[0] else 2
                 index = chosenNode[pos]
                 chosenNode = self._structure[chosenNode[pos]
                                              ] if chosenNode[pos] != -1 else None
@@ -235,6 +233,27 @@ class binarytree(object):
                     raise Exception("Node not found.")
             self._structure[father][pos] = -1
             self._structure = np.delete(self._structure, index, axis=0)
+
+        def subtree(self, node):
+            chosenNode = self._structure[0]
+            pos = 0
+            while node != chosenNode[0]:
+                pos = 1 if node < chosenNode[0] else 2
+                chosenNode = self._structure[chosenNode[pos]
+                                             ] if chosenNode[pos] != -1 else None
+                if chosenNode is None:
+                    raise Exception("Node not found.")
+            new = binarytree.AtomicBinaryTree(
+                name="sub_{}".format(self.name), key_type=self.type)
+            self.__build(new, chosenNode)
+            return new
+
+        def __build(self, new, chosenNode):
+            new.add_nodes(chosenNode[0].item())
+            if chosenNode[1] != -1:
+                self.__build(new, self._structure[chosenNode[1]])
+            if chosenNode[2] != -1:
+                self.__build(new, self._structure[chosenNode[2]])
 
     class ObjectBinaryTree(__binarytree):
         def __init__(self, name=None):
@@ -371,3 +390,24 @@ class binarytree(object):
                     raise Exception("Node not found.")
             self._structure[father][pos] = -1
             self._structure = np.delete(self._structure, index, axis=0)
+
+        def subtree(self, node):
+            chosenNode = self._structure[0]
+            pos = 0
+            while node != chosenNode[0]["key"]:
+                pos = 1 if node < chosenNode[0]["key"] else 2
+                chosenNode = self._structure[chosenNode[pos]
+                                             ] if chosenNode[pos] != -1 else None
+                if chosenNode is None:
+                    raise Exception("Node not found.")
+            new = binarytree.ObjectBinaryTree(
+                name="sub_{}".format(self.name))
+            self.__build(new, chosenNode)
+            return new
+
+        def __build(self, new, chosenNode):
+            new.add_nodes(chosenNode[0])
+            if chosenNode[1] != -1:
+                self.__build(new, self._structure[chosenNode[1]])
+            if chosenNode[2] != -1:
+                self.__build(new, self._structure[chosenNode[2]])
