@@ -371,6 +371,3 @@ class binarytree(object):
                     raise Exception("Node not found.")
             self._structure[father][pos] = -1
             self._structure = np.delete(self._structure, index, axis=0)
-
-
-binarytree.delete("Giuseppe")
