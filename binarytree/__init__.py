@@ -1,1 +1,1 @@
-from .bt import BinaryTree
+from .bt import binarytree
